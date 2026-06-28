@@ -1,0 +1,40 @@
+# ---- Datasets & model weights (NEVER commit — huge) -------------------------
+data/*
+!data/.gitkeep
+weights/*
+!weights/.gitkeep
+*.bin
+*.pcd
+*.pcap
+*.pt
+*.onnx
+*.engine
+outputs/
+
+# ---- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ---- ROS 2 / colcon ---------------------------------------------------------
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# ---- Editor / OS ------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+
+# ---- Docker -----------------------------------------------------------------
+.env

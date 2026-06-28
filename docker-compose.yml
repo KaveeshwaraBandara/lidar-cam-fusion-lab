@@ -1,0 +1,49 @@
+# =============================================================================
+# docker-compose for lidar-cam-fusion-lab
+#
+#   docker compose build
+#   xhost +local:docker        # allow container to use host X server (GUI)
+#   docker compose up -d
+#   docker compose exec fusion bash
+#
+# GPU: uncomment the `deploy:` block (needs nvidia-container-toolkit on host).
+# =============================================================================
+services:
+  fusion:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ROS_DISTRO: jazzy
+        USER_UID: "1000"
+        USER_GID: "1000"
+    image: lidar-cam-fusion-lab:jazzy
+    container_name: fusion_lab
+    network_mode: host          # simplest DDS discovery for ROS 2
+    ipc: host
+    privileged: true            # eases USB sensor / device access for later
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - ROS_DOMAIN_ID=0
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - .:/workspace:rw                              # live code mount
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw             # X11 GUI (RViz/Open3D)
+      - ${HOME}/.Xauthority:/home/dev/.Xauthority:rw
+      # Keep big data OUT of the image; bind-mount from host instead:
+      - ./data:/workspace/data:rw
+      - ./weights:/workspace/weights:rw
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    command: bash
+    # ---- Uncomment for NVIDIA GPU acceleration -----------------------------
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]

@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install "numpy<2.0" scipy pytest ruff
+      - name: Lint
+        run: ruff check src tests scripts || true
+      - name: Run tests (dataset-free)
+        run: pytest tests/ -q

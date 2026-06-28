@@ -1,0 +1,23 @@
+{
+  "name": "lidar-cam-fusion-lab (ROS 2 Jazzy)",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "fusion",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-iot.vscode-ros",
+        "charliermarsh.ruff",
+        "ms-python.black-formatter",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.analysis.extraPaths": ["/workspace/src/fusion_lab"]
+      }
+    }
+  }
+}
