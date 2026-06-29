@@ -13,6 +13,7 @@ ARG ROS_DISTRO
 ENV ROS_DISTRO=${ROS_DISTRO}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
+ENV PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 
 # ---- Locale (UTF-8 required by ROS 2 in minimal containers) ------------------
 RUN apt-get update && apt-get install -y --no-install-recommends locales \
@@ -37,11 +38,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ros-${ROS_DISTRO}-rviz2 \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y --no-install-recommends python-is-python3 \
+    && rm -rf /var/lib/apt/lists/*
+
 # ---- Python deps -------------------------------------------------------------
-# Ubuntu 24.04 ships PEP 668 "externally managed" Python; --break-system-packages
-# is the pragmatic choice inside a throwaway container.
+ENV PIP_DEFAULT_TIMEOUT=300
 COPY docker/requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
+# Pin numpy<2.0 FIRST so opencv/open3d/torch all build against it.
+RUN pip3 install --no-cache-dir --break-system-packages \
+        --retries 10 --timeout 300 "numpy<2.0" \
+    && pip3 install --no-cache-dir --break-system-packages \
+        --retries 10 --timeout 300 \
+        --index-url https://download.pytorch.org/whl/cpu \
+        torch torchvision \
+    && pip3 install --no-cache-dir --break-system-packages \
+        --retries 10 --timeout 300 ultralytics \
+    && pip3 install --no-cache-dir --break-system-packages \
+        --retries 10 --timeout 300 -r /tmp/requirements.txt
 
 # ---- Non-root user (matches typical host UID 1000) ---------------------------
 ARG USERNAME=dev

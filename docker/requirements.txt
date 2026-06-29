@@ -1,42 +1,16 @@
-# -----------------------------------------------------------------------------
-# Python deps for lidar-cam-fusion-lab
-# Installed inside the container; host stays clean.
-# Versions chosen for Python 3.12 (Ubuntu 24.04) compatibility.
-# -----------------------------------------------------------------------------
-
-# Core numerics
-numpy<2.0            # many perception libs still lag on numpy 2.x; pin for safety
+numpy<2.0
 scipy>=1.11
-
-# Point cloud
-open3d>=0.18.0       # 0.18 added cp312 wheels
-
-# Vision
+open3d>=0.18.0
 opencv-python>=4.9
 pillow>=10.0
-
-# Detection (camera 2D). ultralytics pulls in torch.
-ultralytics>=8.2     # YOLOv8/v11
-# torch/torchvision: let ultralytics resolve, or pin CUDA build manually.
-# For GPU, override with the CUDA wheel index in docker build (see README).
-
-# Clustering / ML utilities
 scikit-learn>=1.4
 scikit-image>=0.22
-
-# Dataset loaders
-pykitti>=0.3.1       # KITTI raw + odometry convenience loader
+pykitti>=0.3.1
 nuscenes-devkit>=1.1.11
-
-# Viz / notebooks
 matplotlib>=3.8
 jupyterlab>=4.0
 tqdm>=4.66
-
-# Tracking
-filterpy>=1.4.5      # Kalman / SORT building blocks
-
-# Dev tooling
+filterpy>=1.4.5
 pytest>=8.0
 black>=24.0
 ruff>=0.4
